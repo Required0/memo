@@ -5,4 +5,9 @@ from aiogram.fsm.context import FSMContext
 class Newtask(StatesGroup):
     name_task = State()
     month = State()
+    day = State()
     time = State()
+
+
+class Edittask(StatesGroup):
+    pass
