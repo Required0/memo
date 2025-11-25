@@ -51,5 +51,5 @@ check = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Да",
 
 task = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Текст", callback_data="text")],
                                               [InlineKeyboardButton(text="Месяц", callback_data="m")],
-                                              [InlineKeyboardButton(text="Число", callback_data="n")],
-                                              [InlineKeyboardButton(text="Время", callback_data="t")]])
+                                              [InlineKeyboardButton(text="Число", callback_data="nir")],
+                                              [InlineKeyboardButton(text="Время", callback_data="tir")]])

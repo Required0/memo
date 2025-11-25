@@ -10,4 +10,7 @@ class Newtask(StatesGroup):
 
 
 class Edittask(StatesGroup):
-    pass
+    edit_name_task = State()
+    edit_month = State()
+    edit_day = State()
+    edit_time = State()
