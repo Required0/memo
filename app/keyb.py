@@ -10,41 +10,35 @@ month = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Янв
 
 
 
-number_31 = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="1", callback_data="day_One"), InlineKeyboardButton(text="2", callback_data="day_Two"), InlineKeyboardButton(text="3", callback_data="day_Three")],
-                                     [InlineKeyboardButton(text="4", callback_data="day_Four"), InlineKeyboardButton(text="5", callback_data="day_Five"), InlineKeyboardButton(text="6", callback_data="day_Six")],
-                                     [InlineKeyboardButton(text="7", callback_data="day_Seven"), InlineKeyboardButton(text="8", callback_data="day_Eight"), InlineKeyboardButton(text="9", callback_data="day_Nine")],
-                                     [InlineKeyboardButton(text="10", callback_data="day_Ten"), InlineKeyboardButton(text="11", callback_data="day_Eleven"), InlineKeyboardButton(text="12", callback_data="day_Twelve")],
-                                     [InlineKeyboardButton(text="13", callback_data="day_Thirteen"), InlineKeyboardButton(text="14", callback_data="day_Fourteen"), InlineKeyboardButton(text="15", callback_data="day_Fifteen")],
-                                     [InlineKeyboardButton(text="16", callback_data="day_Sixteen"), InlineKeyboardButton(text="17", callback_data="day_Seventeen"), InlineKeyboardButton(text="18", callback_data="day_Eighteen")],
-                                     [InlineKeyboardButton(text="19", callback_data="day_Nineteen"), InlineKeyboardButton(text="20", callback_data="day_Twenty"), InlineKeyboardButton(text="21", callback_data=" day_Twenty-one")],
-                                     [InlineKeyboardButton(text="22", callback_data=" day_Twenty-two"), InlineKeyboardButton(text="23", callback_data="day_Twenty-three"), InlineKeyboardButton(text="24", callback_data="day_Twenty-four")],
-                                     [InlineKeyboardButton(text="25", callback_data="day_Twenty-five"), InlineKeyboardButton(text="26", callback_data="day_Twenty-six"), InlineKeyboardButton(text="27", callback_data="day_Twenty-seven")],
-                                     [InlineKeyboardButton(text="28", callback_data="day_Twenty-eight"), InlineKeyboardButton(text="29", callback_data="day_Twenty-nine"), InlineKeyboardButton(text="30", callback_data="day_Thirty")],
-                                      [InlineKeyboardButton(text="31", callback_data="day_Thirty-one")]],)
+number_31 = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="1", callback_data="day_One"), InlineKeyboardButton(text="2", callback_data="day_Two"), InlineKeyboardButton(text="3", callback_data="day_Three"), InlineKeyboardButton(text="4", callback_data="day_Four")],
+                                     [InlineKeyboardButton(text="5", callback_data="day_Five"), InlineKeyboardButton(text="6", callback_data="day_Six"), InlineKeyboardButton(text="7", callback_data="day_Seven"), InlineKeyboardButton(text="8", callback_data="day_Eight")],
+                                     [InlineKeyboardButton(text="9", callback_data="day_Nine"), InlineKeyboardButton(text="10", callback_data="day_Ten"), InlineKeyboardButton(text="11", callback_data="day_Eleven"), InlineKeyboardButton(text="12", callback_data="day_Twelve")],
+                                     [InlineKeyboardButton(text="13", callback_data="day_Thirteen"), InlineKeyboardButton(text="14", callback_data="day_Fourteen"), InlineKeyboardButton(text="15", callback_data="day_Fifteen"), InlineKeyboardButton(text="16", callback_data="day_Sixteen")],
+                                     [InlineKeyboardButton(text="17", callback_data="day_Seventeen"), InlineKeyboardButton(text="18", callback_data="day_Eighteen"), InlineKeyboardButton(text="19", callback_data="day_Nineteen"), InlineKeyboardButton(text="20", callback_data="day_Twenty")],
+                                     [InlineKeyboardButton(text="21", callback_data=" day_Twenty-one"), InlineKeyboardButton(text="22", callback_data=" day_Twenty-two"), InlineKeyboardButton(text="23", callback_data="day_Twenty-three"), InlineKeyboardButton(text="24", callback_data="day_Twenty-four")],
+                                     [InlineKeyboardButton(text="25", callback_data="day_Twenty-five"), InlineKeyboardButton(text="26", callback_data="day_Twenty-six"), InlineKeyboardButton(text="27", callback_data="day_Twenty-seven"), InlineKeyboardButton(text="28", callback_data="day_Twenty-eight")],
+                                     [InlineKeyboardButton(text="29", callback_data="day_Twenty-nine"), InlineKeyboardButton(text="30", callback_data="day_Thirty"), InlineKeyboardButton(text="31", callback_data="day_Thirty-one")]],)
+                                      
 
 
-number_28 = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="1", callback_data="day_One"), InlineKeyboardButton(text="2", callback_data="day_Two"), InlineKeyboardButton(text="3", callback_data="day_Three")],
-                                     [InlineKeyboardButton(text="4", callback_data="day_Four"), InlineKeyboardButton(text="5", callback_data="day_Five"), InlineKeyboardButton(text="6", callback_data="day_Six")],
-                                     [InlineKeyboardButton(text="7", callback_data="day_Seven"), InlineKeyboardButton(text="8", callback_data="day_Eight"), InlineKeyboardButton(text="9", callback_data="day_Nine")],
-                                     [InlineKeyboardButton(text="10", callback_data="day_Ten"), InlineKeyboardButton(text="11", callback_data="day_Eleven"), InlineKeyboardButton(text="12", callback_data="day_Twelve")],
-                                     [InlineKeyboardButton(text="13", callback_data="day_Thirteen"), InlineKeyboardButton(text="14", callback_data="day_Fourteen"), InlineKeyboardButton(text="15", callback_data="day_Fifteen")],
-                                     [InlineKeyboardButton(text="16", callback_data="day_Sixteen"), InlineKeyboardButton(text="17", callback_data="day_Seventeen"), InlineKeyboardButton(text="18", callback_data="day_Eighteen")],
-                                     [InlineKeyboardButton(text="19", callback_data="day_Nineteen"), InlineKeyboardButton(text="20", callback_data="day_Twenty"), InlineKeyboardButton(text="21", callback_data=" day_Twenty-one")],
-                                     [InlineKeyboardButton(text="22", callback_data=" day_Twenty-two"), InlineKeyboardButton(text="23", callback_data="day_Twenty-three"), InlineKeyboardButton(text="24", callback_data="day_Twenty-four")],
-                                     [InlineKeyboardButton(text="25", callback_data="day_Twenty-five"), InlineKeyboardButton(text="26", callback_data="day_Twenty-six"), InlineKeyboardButton(text="27", callback_data="day_Twenty-seven")],
-                                     [InlineKeyboardButton(text="28", callback_data="day_Twenty-eight")]])
+number_28 = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="1", callback_data="day_One"), InlineKeyboardButton(text="2", callback_data="day_Two"), InlineKeyboardButton(text="3", callback_data="day_Three"), InlineKeyboardButton(text="4", callback_data="day_Four")],
+                                     [InlineKeyboardButton(text="5", callback_data="day_Five"), InlineKeyboardButton(text="6", callback_data="day_Six"), InlineKeyboardButton(text="7", callback_data="day_Seven"), InlineKeyboardButton(text="8", callback_data="day_Eight")],
+                                     [InlineKeyboardButton(text="9", callback_data="day_Nine"),InlineKeyboardButton(text="10", callback_data="day_Ten"), InlineKeyboardButton(text="11", callback_data="day_Eleven"), InlineKeyboardButton(text="12", callback_data="day_Twelve")],
+                                     [InlineKeyboardButton(text="13", callback_data="day_Thirteen"), InlineKeyboardButton(text="14", callback_data="day_Fourteen"), InlineKeyboardButton(text="15", callback_data="day_Fifteen"),InlineKeyboardButton(text="16", callback_data="day_Sixteen")],
+                                     [InlineKeyboardButton(text="17", callback_data="day_Seventeen"), InlineKeyboardButton(text="18", callback_data="day_Eighteen"), InlineKeyboardButton(text="19", callback_data="day_Nineteen"), InlineKeyboardButton(text="20", callback_data="day_Twenty")],
+                                     [InlineKeyboardButton(text="21", callback_data=" day_Twenty-one"), InlineKeyboardButton(text="22", callback_data=" day_Twenty-two"), InlineKeyboardButton(text="23", callback_data="day_Twenty-three"), InlineKeyboardButton(text="24", callback_data="day_Twenty-four")],
+                                     [InlineKeyboardButton(text="25", callback_data="day_Twenty-five"), InlineKeyboardButton(text="26", callback_data="day_Twenty-six"), InlineKeyboardButton(text="27", callback_data="day_Twenty-seven"), InlineKeyboardButton(text="28", callback_data="day_Twenty-eight")]])
+                                     
 
 
-number_30 = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="1", callback_data="day_One"), InlineKeyboardButton(text="2", callback_data="day_Two"), InlineKeyboardButton(text="3", callback_data="day_Three")],
-                                     [InlineKeyboardButton(text="4", callback_data="day_Four"), InlineKeyboardButton(text="5", callback_data="day_Five"), InlineKeyboardButton(text="6", callback_data="day_Six")],
-                                     [InlineKeyboardButton(text="7", callback_data="day_Seven"), InlineKeyboardButton(text="8", callback_data="day_Eight"), InlineKeyboardButton(text="9", callback_data="day_Nine")],
-                                     [InlineKeyboardButton(text="10", callback_data="day_Ten"), InlineKeyboardButton(text="11", callback_data="day_Eleven"), InlineKeyboardButton(text="12", callback_data="day_Twelve")],
-                                     [InlineKeyboardButton(text="13", callback_data="day_Thirteen"), InlineKeyboardButton(text="14", callback_data="day_Fourteen"), InlineKeyboardButton(text="15", callback_data="day_Fifteen")],
-                                     [InlineKeyboardButton(text="16", callback_data="day_Sixteen"), InlineKeyboardButton(text="17", callback_data="day_Seventeen"), InlineKeyboardButton(text="18", callback_data="day_Eighteen")],
-                                     [InlineKeyboardButton(text="19", callback_data="day_Nineteen"), InlineKeyboardButton(text="20", callback_data="day_Twenty"), InlineKeyboardButton(text="21", callback_data=" day_Twenty-one")],
-                                     [InlineKeyboardButton(text="22", callback_data=" day_Twenty-two"), InlineKeyboardButton(text="23", callback_data="day_Twenty-three"), InlineKeyboardButton(text="24", callback_data="day_Twenty-four")],
-                                     [InlineKeyboardButton(text="25", callback_data="day_Twenty-five"), InlineKeyboardButton(text="26", callback_data="day_Twenty-six"), InlineKeyboardButton(text="27", callback_data="day_Twenty-seven")],
-                                     [InlineKeyboardButton(text="28", callback_data="day_Twenty-eight"), InlineKeyboardButton(text="29", callback_data="day_Twenty-nine"), InlineKeyboardButton(text="30", callback_data="day_Thirty")]],)
+number_30 = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="1", callback_data="day_One"), InlineKeyboardButton(text="2", callback_data="day_Two"), InlineKeyboardButton(text="3", callback_data="day_Three"), InlineKeyboardButton(text="4", callback_data="day_Four")],
+                                     [InlineKeyboardButton(text="5", callback_data="day_Five"), InlineKeyboardButton(text="6", callback_data="day_Six"), InlineKeyboardButton(text="7", callback_data="day_Seven"), InlineKeyboardButton(text="8", callback_data="day_Eight")],
+                                     [InlineKeyboardButton(text="9", callback_data="day_Nine"), InlineKeyboardButton(text="10", callback_data="day_Ten"), InlineKeyboardButton(text="11", callback_data="day_Eleven"), InlineKeyboardButton(text="12", callback_data="day_Twelve")],
+                                     [InlineKeyboardButton(text="13", callback_data="day_Thirteen"), InlineKeyboardButton(text="14", callback_data="day_Fourteen"), InlineKeyboardButton(text="15", callback_data="day_Fifteen"), InlineKeyboardButton(text="16", callback_data="day_Sixteen")],
+                                     [InlineKeyboardButton(text="17", callback_data="day_Seventeen"), InlineKeyboardButton(text="18", callback_data="day_Eighteen"), InlineKeyboardButton(text="19", callback_data="day_Nineteen"), InlineKeyboardButton(text="20", callback_data="day_Twenty")],
+                                     [InlineKeyboardButton(text="21", callback_data=" day_Twenty-one"), InlineKeyboardButton(text="22", callback_data=" day_Twenty-two"), InlineKeyboardButton(text="23", callback_data="day_Twenty-three"), InlineKeyboardButton(text="24", callback_data="day_Twenty-four")],
+                                     [InlineKeyboardButton(text="25", callback_data="day_Twenty-five"), InlineKeyboardButton(text="26", callback_data="day_Twenty-six"), InlineKeyboardButton(text="27", callback_data="day_Twenty-seven"), InlineKeyboardButton(text="28", callback_data="day_Twenty-eight")],
+                                     [InlineKeyboardButton(text="29", callback_data="day_Twenty-nine"), InlineKeyboardButton(text="30", callback_data="day_Thirty")]],)
 
 check = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Да", callback_data="Yes_1")],
                                               [InlineKeyboardButton(text="Нет", callback_data="No_0")]])
@@ -53,3 +47,12 @@ task = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Тек�
                                               [InlineKeyboardButton(text="Месяц", callback_data="m")],
                                               [InlineKeyboardButton(text="Число", callback_data="nir")],
                                               [InlineKeyboardButton(text="Время", callback_data="tir")]])
+
+
+#часовой пояс 
+
+utc = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Калининград(UTC+2)", callback_data="utc_Europe/Kaliningrad"), InlineKeyboardButton(text="Москва(UTC+3)", callback_data="utc_Europe/Moscow"), InlineKeyboardButton(text="Самара(UTC+4)", callback_data="utc_Europe/Samara")],
+                                     [InlineKeyboardButton(text="Екатеринбург(UTC+5)", callback_data="utc_Asia/Yekaterinburg"), InlineKeyboardButton(text="Омск(UTC+6)", callback_data="utc_Asia/Omsk"), InlineKeyboardButton(text="Красноярск(UTC+7)", callback_data="utc_Asia/Krasnoyarsk")],
+                                     [InlineKeyboardButton(text="Иркутск(UTC+8)", callback_data="utc_Asia/Irkutsk"), InlineKeyboardButton(text="Чита(UTC+9)", callback_data="utc_Asia/Chita"), InlineKeyboardButton(text="Владивосток(UTC+10)", callback_data="utc_Asia/Vladivostok")],
+                                     [InlineKeyboardButton(text="Сахалин(UTC+11)", callback_data="utc_Asia/Sakhalin"), InlineKeyboardButton(text="Камчатка(UTC+12)", callback_data="utc_Asia/Kamchatka")]])
+                                     
