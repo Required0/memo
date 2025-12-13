@@ -3,19 +3,19 @@ from aiogram.filters import CommandStart, Command
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext 
 from app.state import Newtask, Edittask
-from config import bot, dp, scheduler
+from config import bot, dp
 from aiogram import Bot, Dispatcher
 from app import keyb as kb
 import logging
 from datetime import datetime, timedelta
-from apscheduler.triggers.date import DateTrigger
-import pytz 
+import aiohttp
 
 rout = Router()
 
 bt = bot
 
- 
+url = "http://127.0.0.1:8000/set_timezone"
+
 
 day_names_map = {
   "day_One": 1,"day_Two": 2,"day_Three": 3,"day_Four": 4,"day_Five": 5,
@@ -54,8 +54,10 @@ async def new_task(call:CallbackQuery, state: FSMContext):
 @rout.callback_query(Newtask.utc, F.data.startswith("utc_"))
 async def month(call: CallbackQuery, state: FSMContext): 
    callback_data_utc = call.data
+   id_chat = id_chat = call.message.chat.id
    print(callback_data_utc)
    print(callback_data_utc[4:])
+   
    
 
    month_names_utc = {
@@ -63,13 +65,29 @@ async def month(call: CallbackQuery, state: FSMContext):
     "utc_Asia/Omsk": "Омск", "utc_Asia/Krasnoyarsk": "Красноярск", "utc_Asia/Irkutsk": "Иркутск", "utc_Asia/Chita": "Чита",
     "utc_Asia/Vladivostok": "Владивосток", "utc_Asia/Sakhalin": "Сахалин", "utc_Asia/Kamchatka": "Камчатка"
  }
+   
+   timezone_str = callback_data_utc[4:]
    targ = month_names_utc[callback_data_utc]
    print(targ)
-   await state.update_data(utc_s=callback_data_utc[4:])
-   await state.set_state(Newtask.name_task)
-   await call.answer('')
-   await call.message.edit_text('О чем тебе напомнить? Напиши кратко так, как было понятно тебе 💚')
 
+   payload = {
+        "user_id": id_chat,
+        "timezone_str": timezone_str
+    }
+
+   async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=payload) as response:
+        
+            if response.status == 200:
+                print("Успех! Часовой пояс сохранен.")
+                response_data = await response.json()
+                print("Ответ бэкенда:", response_data)
+                await state.update_data(utc_s=month_names_utc[callback_data_utc])
+                await state.set_state(Newtask.name_task)
+                await call.answer('')
+                await call.message.edit_text(f'Ваш часовой пояс успешно установлен: {targ}\nО чем тебе напомнить? Напиши кратко так, как было бы понятно тебе 💚')
+            else:
+                print(f"Ошибка! Статус: {response.status}")
 
 
 
@@ -140,15 +158,10 @@ async def month(call: CallbackQuery, state: FSMContext):
    await call.message.edit_text("Укажите время в данном формате ЧЧ ММ (например, 11 20):")
 
 
-async def send_scheduled_message_job(mesbot, chat_id: int, message_text: str):
-  print(f"Ваша задача отправлена - {message_text}")
-  await mesbot.send_message(chat_id, message_text)
-
 
 #выбор времени
 @rout.message(Newtask.time)
 async def time(mes: Message, state: FSMContext):
-    target_chat_id = mes.chat.id
     user_input = mes.text.strip()
     parts = user_input.split()
     
@@ -181,25 +194,13 @@ async def time(mes: Message, state: FSMContext):
     month = user_data.get("month_s", "Месяц не выбран") 
     day = user_data.get("day_s", "День не указан")
     time = user_data.get("time_s", "Время не указано")
-    utc = user_data.get("utc_s", "Время не указано")
-    message_text = task
-    user_tz = pytz.timezone(utc)
-    current_time_in_tz = datetime.now(user_tz)
-    scheduled_time = current_time_in_tz + timedelta(seconds=10)
-    scheduler.add_job(                     #добавление задачи в планировщик
-        send_scheduled_message_job,       # Функция, которую нужно выполнить
-        DateTrigger(run_date=scheduled_time.astimezone(pytz.utc)), # Когда выполнить (точный datetime)
-        args=[mes.bot, target_chat_id, message_text], # Аргументы для нашей функции
-        id="simple_message_job",             # Уникальный ID для этой задачи
-    )
-    print("Задача запланирована")
-   #  await mes.answer(f"Итак, твое напоминание: {task} на {month}? День {day} в {time}. Все верно?", reply_markup=kb.check)
+    utc = user_data.get("utc_s", "Часовой пояс не указан")
+    
+    await mes.answer(f"Итак, твой часовой пояс: {utc}\nТвое напоминание: {task} на {month}\nДень {day} в {time}.\nВсе верно?", reply_markup=kb.check)
  
 
 
-
-
-#-------------------------------------------------------------редактирование
+#-------------------------------------------------------------редактирование задачи
 
 @rout.callback_query(F.data == "No_0")
 async def NO(call:CallbackQuery):
@@ -343,6 +344,17 @@ async def month(mes: Message, state: FSMContext):
 
 
 @rout.callback_query(F.data == "Yes_1")
-async def NO(call:CallbackQuery):
+async def YES(call:CallbackQuery, state: FSMContext):
+  target_chat_id = call.message.chat.id
+
+  user_data = await state.get_data()
+  task = user_data.get("task_s", "Задача не указана")
+  month = user_data.get("month_s", "Месяц не выбран") 
+  day = user_data.get("day_s", "День не указан")
+  time = user_data.get("time_s", "Время не указано")
+  utc = user_data.get("utc_s", "Часовой пояс не указан")
+  
+
+  state.finish()
   await call.answer()
   await call.message.edit_text(text = "Напоминание успешно создано")

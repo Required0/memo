@@ -2,16 +2,18 @@ import asyncio
 from app.rout import rout
 from aiogram.types import BotCommand 
 from aiogram.methods.set_my_commands import SetMyCommands 
-from config import bot, dp, scheduler
+from config import bot, dp
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logging.getLogger('apscheduler').setLevel(logging.DEBUG)
+
 
 async def set_default_commands(bt: bot):
     # Команды, которые будут отображаться в меню
     commands = [
         BotCommand(command="start", description="🚀 Запустить бота"),
+        BotCommand(command="tasks", description="📝 Мои напоминания"),
+        BotCommand(command="timezone", description="⏳ Изменить часовой пояс"),
         BotCommand(command="help", description="ℹ️ Помощь по боту"),
     ]
     # Отправляем список команд в Telegram
@@ -23,20 +25,12 @@ async def main():
     await bot.delete_webhook(drop_pending_updates=True)
     dp.include_router(rout)
     await set_default_commands(bot)
-    
-    print(f"DEBUG: Тип scheduler перед start(): {type(scheduler)}")
-    print(f"DEBUG: Значение scheduler перед start(): {scheduler}")
-    
-    scheduler.start() 
-    print("✅ Планировщик УСПЕШНО запущен")
 
     try:
         await dp.start_polling(bot) # Основной цикл бота
     finally:
-        print("Завершение работы: останавливаю планировщик и закрываю сессию бота...")
-        scheduler.shutdown(wait=False) 
         await bot.session.close()
-        print("Бот успешно остановлен.")
+        
     
 
 
