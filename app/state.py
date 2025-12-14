@@ -1,6 +1,7 @@
-from aiogram.fsm.state import State, StatesGroup
-from aiogram.fsm.context import FSMContext 
+from aiogram.fsm.state import StatesGroup, State
 
+class Timezone(StatesGroup):
+    UTC = State()
 
 class Newtask(StatesGroup):
     utc = State()
@@ -8,7 +9,6 @@ class Newtask(StatesGroup):
     month = State()
     day = State()
     time = State()
-
 
 class Edittask(StatesGroup):
     edit_utc = State()

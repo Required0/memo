@@ -2,7 +2,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, Command
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext 
-from app.state import Newtask, Edittask
+from app.state import Newtask, Edittask, Timezone
 from config import bot, dp
 from aiogram import Bot, Dispatcher
 from app import keyb as kb
@@ -14,7 +14,8 @@ rout = Router()
 
 bt = bot
 
-url = "http://127.0.0.1:8000/set_timezone"
+url_set_timezone = "http://127.0.0.1:8000/set_timezone"
+url_check_timezone = "http://127.0.0.1:8000/check_timezone"
 
 
 day_names_map = {
@@ -28,7 +29,7 @@ day_names_map = {
 
 
 
-@rout.message(CommandStart())
+@rout.message(Command("start"))
 async def cmd_start(mes: Message):     
     logging.info(f"Получена команда /start от пользователя {mes.from_user.id}")
     logging.info(f"Планировщик запущен")
@@ -37,24 +38,60 @@ async def cmd_start(mes: Message):
                            caption=f"Привет, {user_name}! Я помогу тебе записать самое важное и напомню обо всем, что нужно 😌 \nЖмакай на новое напоминание", reply_markup=kb.main)
    
 
+#команда в меню на изменение часового пояса 
+@rout.message(Command("timezone"))
+async def cmd_timezone(mes: Message, state: FSMContext):  
+      id_chat = mes.chat.id
+      
+      payload = {
+        "user_id": id_chat
+    }
+   
+      async with aiohttp.ClientSession() as session:
+       async with session.get(url_check_timezone, params=payload) as response:
+           if response.status == 200:
+              data = await response.json() 
+              user_timezone = data['timezone_str']
+              print("Часовой пояс у данного пользователя уже установлен")
+              await mes.answer(f'Ваш часовой пояс: {user_timezone}\nВыберите на который хотите его изменить:', reply_markup=kb.utc)
+              await state.set_state(Timezone.UTC)
+           elif response.status == 404:
+               await mes.send_message(
+                                 text='У вас не установлен часовой пояс\nВыберите из представленных:', reply_markup=kb.utc)
+               await state.set_state(Timezone.UTC)
 
 
 #выбор часового пояса/проверка 
 @rout.callback_query(F.data == "newtask")
 async def new_task(call:CallbackQuery, state: FSMContext):
-    await state.set_state(Newtask.utc)
+    
     await call.answer()
-    await call.bot.send_message(
-  chat_id=call.from_user.id, # Или call.message.chat.id
-  text='Выбери часовой пояс', reply_markup=kb.utc
-)
+    
+    id_chat = call.message.chat.id
+
+    payload = {
+        "user_id": id_chat
+    }
+   
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url_check_timezone, params=payload) as response:
+           if response.status == 200:
+              print("Часовой пояс у данного пользователя уже установлен")
+              await state.set_state(Newtask.name_task)
+              await call.message.answer(f'О чем тебе напомнить? Напиши кратко так, как было бы понятно тебе 💚')
+           elif response.status == 404:
+               await state.set_state(Newtask.utc)
+               await call.bot.send_message(
+                                 chat_id=call.from_user.id,
+                                 text='Для начала установите часовой пояс', reply_markup=kb.utc
+                                          )
 
 
-
-@rout.callback_query(Newtask.utc, F.data.startswith("utc_"))
+#роут на смену часового пояса из кнопки меню
+@rout.callback_query(Timezone.UTC, F.data.startswith("utc_"))
 async def month(call: CallbackQuery, state: FSMContext): 
    callback_data_utc = call.data
-   id_chat = id_chat = call.message.chat.id
+   id_chat = call.message.chat.id
    print(callback_data_utc)
    print(callback_data_utc[4:])
    
@@ -76,7 +113,48 @@ async def month(call: CallbackQuery, state: FSMContext):
     }
 
    async with aiohttp.ClientSession() as session:
-        async with session.post(url, json=payload) as response:
+        async with session.post(url_set_timezone, json=payload) as response:
+        
+            if response.status == 200:
+                print("Успех! Часовой пояс сохранен.")
+                response_data = await response.json()
+                print("Ответ бэкенда:", response_data)
+                await state.update_data(utc_s=month_names_utc[callback_data_utc])
+                await state.set_state(Newtask.name_task)
+                await call.answer('')
+                await call.message.edit_text(f'Ваш часовой пояс успешно установлен: {targ}', reply_markup=kb.main)
+            else:
+                print(f"Ошибка! Статус: {response.status}")
+
+
+
+
+@rout.callback_query(Newtask.utc, F.data.startswith("utc_"))
+async def month(call: CallbackQuery, state: FSMContext): 
+   callback_data_utc = call.data
+   id_chat = call.message.chat.id
+   print(callback_data_utc)
+   print(callback_data_utc[4:])
+   
+   
+
+   month_names_utc = {
+    "utc_Europe/Kaliningrad": "Калининград", "utc_Europe/Moscow": "Москва", "utc_Europe/Samara": "Самара", "utc_Asia/Yekaterinburg": "Екатеринбург",
+    "utc_Asia/Omsk": "Омск", "utc_Asia/Krasnoyarsk": "Красноярск", "utc_Asia/Irkutsk": "Иркутск", "utc_Asia/Chita": "Чита",
+    "utc_Asia/Vladivostok": "Владивосток", "utc_Asia/Sakhalin": "Сахалин", "utc_Asia/Kamchatka": "Камчатка"
+ }
+   
+   timezone_str = callback_data_utc[4:]
+   targ = month_names_utc[callback_data_utc]
+   print(targ)
+
+   payload = {
+        "user_id": id_chat,
+        "timezone_str": timezone_str
+    }
+
+   async with aiohttp.ClientSession() as session:
+        async with session.post(url_set_timezone, json=payload) as response:
         
             if response.status == 200:
                 print("Успех! Часовой пояс сохранен.")
