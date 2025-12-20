@@ -16,6 +16,7 @@ bt = bot
 
 url_set_timezone = "http://127.0.0.1:8000/set_timezone"
 url_check_timezone = "http://127.0.0.1:8000/check_timezone"
+url_set_task = "http://127.0.0.1:8000/tasks"
 
 
 day_names_map = {
@@ -198,16 +199,18 @@ async def month(call: CallbackQuery, state: FSMContext):
    callback_data_month = call.data 
    print(callback_data_month)
    month_names_map = {
-    "month_one": "Январь", "month_two": "Февраль", "month_three": "Март", "month_four": "Апрель",
-    "month_five": "Май", "month_six": "Июнь", "month_seven": "Июль", "month_eight": "Август",
-    "month_nine": "Сентябрь", "month_ten": "Октябрь", "month_eleven": "Ноябрь", "month_twelve": "Декабрь"
+    "month_one": "Январь@", "month_two": "Февраль@", "month_three": "Март@", "month_four": "Апрель@",
+    "month_five": "Май@", "month_six": "Июнь@", "month_seven": "Июль@", "month_eight": "Август@",
+    "month_nine": "Сентябрь@", "month_ten": "Октябрь@", "month_eleven": "Ноябрь@", "month_twelve": "Декабрь@"
  }
+   index = list(month_names_map.keys()).index(callback_data_month) + 1
+   
    targ = month_names_map[callback_data_month]
    global num;
-   targ_31 = ["Январь","Март","Май","Июль","Август","Октябрь","Декабрь"]
-   targ_30 = ["Апрель","Июнь","Сентябрь","Ноябрь"]
+   targ_31 = ["Январь@","Март@","Май@","Июль@","Август@","Октябрь@","Декабрь@"]
+   targ_30 = ["Апрель@","Июнь@","Сентябрь@","Ноябрь@"]
 
-   if targ == "Февраль":
+   if targ == "Февраль@":
       num = kb.number_28
    
    if targ in targ_30:
@@ -215,8 +218,11 @@ async def month(call: CallbackQuery, state: FSMContext):
 
    if targ in targ_31:
       num = kb.number_31
-
-   display_month_name = month_names_map[callback_data_month]
+   
+   
+   display_month_name = month_names_map[callback_data_month] + str(index)
+   print(display_month_name)
+ 
    await state.update_data(month_s=display_month_name)
    await state.set_state(Newtask.day)
    await call.answer('')
@@ -269,11 +275,14 @@ async def time(mes: Message, state: FSMContext):
     await state.update_data(time_s=f"{hours:02d}:{minutes:02d}")
     user_data = await state.get_data()
     task = user_data.get("task_s", "Задача не указана")
-    month = user_data.get("month_s", "Месяц не выбран") 
+    months = user_data.get("month_s", "Месяц не выбран")
+    month = months.split("@")[0] 
     day = user_data.get("day_s", "День не указан")
     time = user_data.get("time_s", "Время не указано")
     utc = user_data.get("utc_s", "Часовой пояс не указан")
     
+
+
     await mes.answer(f"Итак, твой часовой пояс: {utc}\nТвое напоминание: {task} на {month}\nДень {day} в {time}.\nВсе верно?", reply_markup=kb.check)
  
 
@@ -430,9 +439,30 @@ async def YES(call:CallbackQuery, state: FSMContext):
   month = user_data.get("month_s", "Месяц не выбран") 
   day = user_data.get("day_s", "День не указан")
   time = user_data.get("time_s", "Время не указано")
-  utc = user_data.get("utc_s", "Часовой пояс не указан")
   
+  hours, minutes = time.split(':')
 
-  state.finish()
-  await call.answer()
-  await call.message.edit_text(text = "Напоминание успешно создано")
+  now = datetime.now()
+  print(now)
+  target_date = datetime(year=now.year, month = int(month.split("@")[1]), day=int(day), hour=int(hours), minute=int(minutes))
+  
+  print(target_date)
+  
+  payload = {
+        "user_id": target_chat_id,
+        "text": task,
+        "time": target_date.isoformat()
+    }
+
+  async with aiohttp.ClientSession() as session:
+        async with session.post(url_set_task, json=payload) as response:
+        
+            if response.status == 200:
+                print("Успех! Напоминание сохранено")
+                response_data = await response.json()
+                print("Ответ бэкенда:", response_data)
+                await call.answer('')
+                await call.message.edit_text(f'Ваше напоминание успешно создано 💚')
+            else:
+                print(f"Ошибка! Статус: {response.status}")
+  
