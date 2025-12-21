@@ -17,6 +17,7 @@ bt = bot
 url_set_timezone = "http://127.0.0.1:8000/set_timezone"
 url_check_timezone = "http://127.0.0.1:8000/check_timezone"
 url_set_task = "http://127.0.0.1:8000/tasks"
+url_get_tasks = "http://127.0.0.1:8000/get_all_tasks"
 
 
 day_names_map = {
@@ -39,6 +40,38 @@ async def cmd_start(mes: Message):
                            caption=f"Привет, {user_name}! Я помогу тебе записать самое важное и напомню обо всем, что нужно 😌 \nЖмакай на новое напоминание", reply_markup=kb.main)
    
 
+
+@rout.message(Command("tasks"))
+async def cmd_timezone(mes: Message):  
+    id_chat = mes.chat.id
+
+    payload = {
+        "user_id": id_chat
+    }
+    
+    async with aiohttp.ClientSession() as session:
+       async with session.get(url_get_tasks, params=payload) as response:
+           if response.status == 200:
+              data = await response.json() 
+              print(data)
+              tasks_list = []
+              for task in data:
+                 text = task.get('text')
+                 times = task.get('time').replace('T', ' ')
+                 time = times[:-3]
+                 item = f"📌 {text}\n⏰ {time}"
+                 tasks_list.append(item)
+
+              final_text = "📋 **Ваши напоминания:**\n\n" + "\n\n".join(tasks_list)   
+              await mes.answer(final_text, parse_mode="Markdown")
+           elif response.status == 404:
+               await mes.answer(
+                                 text='У вас нету напоминаний\nЧтобы создать нажмите кнпоку ниже', reply_markup=kb.main)
+               
+
+
+
+
 #команда в меню на изменение часового пояса 
 @rout.message(Command("timezone"))
 async def cmd_timezone(mes: Message, state: FSMContext):  
@@ -57,7 +90,7 @@ async def cmd_timezone(mes: Message, state: FSMContext):
               await mes.answer(f'Ваш часовой пояс: {user_timezone}\nВыберите на который хотите его изменить:', reply_markup=kb.utc)
               await state.set_state(Timezone.UTC)
            elif response.status == 404:
-               await mes.send_message(
+               await mes.answer(
                                  text='У вас не установлен часовой пояс\nВыберите из представленных:', reply_markup=kb.utc)
                await state.set_state(Timezone.UTC)
 
