@@ -13,6 +13,7 @@ async def set_default_commands(bt: bot):
     commands = [
         BotCommand(command="start", description="🚀 Запустить бота"),
         BotCommand(command="tasks", description="📝 Мои напоминания"),
+        BotCommand(command="delete", description="🗑️ Удалить напоминание"),
         BotCommand(command="timezone", description="⏳ Установить/Изменить часовой пояс"),
         BotCommand(command="help", description="ℹ️ Помощь по боту"),
     ]

@@ -1,6 +1,9 @@
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, Command
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import InlineKeyboardButton
 from aiogram import Router, F
+from aiogram import html
 from aiogram.fsm.context import FSMContext 
 from app.state import Newtask, Edittask, Timezone
 from config import bot, dp
@@ -18,6 +21,7 @@ url_set_timezone = "http://127.0.0.1:8000/set_timezone"
 url_check_timezone = "http://127.0.0.1:8000/check_timezone"
 url_set_task = "http://127.0.0.1:8000/tasks"
 url_get_tasks = "http://127.0.0.1:8000/get_all_tasks"
+url_delete_task = "http://127.0.0.1:8000/delete_task"
 
 
 day_names_map = {
@@ -56,20 +60,112 @@ async def cmd_timezone(mes: Message):
               print(data)
               tasks_list = []
               for task in data:
+                 num_task = task.get('local_id')
                  text = task.get('text')
                  times = task.get('time').replace('T', ' ')
                  time = times[:-3]
-                 item = f"📌 {text}\n⏰ {time}"
+               # 1. Внутри цикла меняем формирование одного элемента
+                 item = (
+                     f"📍 <b>Задача №{num_task}</b>\n"
+                     f"📝 {text}\n"
+                     f"⏰ <i>{time}</i>\n"
+                     f"<code>────────────────</code>"
+                        )
                  tasks_list.append(item)
 
-              final_text = "📋 **Ваши напоминания:**\n\n" + "\n\n".join(tasks_list)   
-              await mes.answer(final_text, parse_mode="Markdown")
+              final_text = "📋 <b>Ваши напоминания:</b>\n\n" + "\n".join(tasks_list)
+              await mes.answer(final_text, parse_mode="HTML")
+
            elif response.status == 404:
                await mes.answer(
                                  text='У вас нету напоминаний\nЧтобы создать нажмите кнпоку ниже', reply_markup=kb.main)
                
 
 
+
+#роут для удаления задач
+@rout.message(Command("delete"))
+async def cmd_delete_list(mes: Message): 
+  
+  id_chat = mes.chat.id
+
+  payload = {
+        "user_id": id_chat
+             }
+
+  async with aiohttp.ClientSession() as session:
+    async with session.get(url_get_tasks, params=payload) as response:
+      if response.status == 200:
+        data = await response.json()
+
+        tasks_list = []
+        # --- СОЗДАЕМ БИЛДЕР КЛАВИАТУРЫ ---
+        builder = InlineKeyboardBuilder()
+
+        for task in data:
+          num_task = task.get('local_id')
+          text = html.quote(task.get('text')) 
+          time = task.get('time').replace('T', ' ')[:-3]
+
+          # Формируем текст списка (как у тебя было)
+          item = (
+            f"📍 <b>Задача №{num_task}</b>\n"
+            f"📝 {text}\n"
+            f"⏰ <i>{time}</i>\n"
+            f"<code>----------------</code>"
+          )
+          tasks_list.append(item)
+
+          # --- ДОБАВЛЯЕМ КНОПКУ ДЛЯ ЭТОЙ ЗАДАЧИ ---
+          # callback_data — это то, что придет боту при нажатии
+          builder.add(InlineKeyboardButton(
+            text=f"❌ №{num_task}", 
+            callback_data=f"delete_task:{num_task}"
+          ))
+
+        # Настраиваем кнопки (например, по 4 в ряд, чтобы не было длинного списка)
+        builder.adjust(4)
+
+        final_text = "<b>Ваши напоминания:</b>\n\n" + "\n".join(tasks_list)
+        final_text += "\n\n<i>Нажмите на кнопку с номером, чтобы удалить задачу.</i>"
+
+        await mes.answer(
+          final_text, 
+          parse_mode="HTML", 
+          reply_markup=builder.as_markup()
+        )
+
+      elif response.status == 404:
+        await mes.answer(
+          text='У вас нет активных напоминаний.',
+          reply_markup=kb.main
+        )
+
+
+#сам роут удаления задачи
+@rout.callback_query(F.data.startswith("delete_task:"))
+async def process_delete_callback(callback: CallbackQuery):
+ 
+  local_id = int(callback.data.split(":")[1])
+  user_id = callback.from_user.id
+
+
+  payload = {
+    "user_id": user_id,
+    "local_id": local_id,
+    "text": "deleted via bot", # Заглушка
+    "time": "2025-01-01T00:00:00", # Заглушка
+  }
+
+
+  async with aiohttp.ClientSession() as session:
+   
+    async with session.request("DELETE", url_delete_task, json=payload) as response:
+
+      if response.status == 200:
+        await callback.answer(f"Задача №{local_id} удалена ✅")
+      else:
+         print(f"Ошибка{response.status}")
 
 
 #команда в меню на изменение часового пояса 
