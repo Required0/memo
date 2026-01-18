@@ -12,6 +12,8 @@ from app import keyb as kb
 import logging
 from datetime import datetime, timedelta
 import aiohttp
+import asyncio
+
 
 rout = Router()
 
@@ -61,8 +63,8 @@ async def cmd_timezone(mes: Message):
               tasks_list = []
               for task in data:
                  num_task = task.get('local_id')
-                 text = task.get('text')
-                 times = task.get('time').replace('T', ' ')
+                 text = task.get('task_text')
+                 times = task.get('task_time').replace('T', ' ')
                  time = times[:-3]
                # 1. Внутри цикла меняем формирование одного элемента
                  item = (
@@ -104,8 +106,8 @@ async def cmd_delete_list(mes: Message):
 
         for task in data:
           num_task = task.get('local_id')
-          text = html.quote(task.get('text')) 
-          time = task.get('time').replace('T', ' ')[:-3]
+          text = html.quote(task.get('task_text')) 
+          time = task.get('task_time').replace('T', ' ')[:-3]
 
           # Формируем текст списка (как у тебя было)
           item = (
@@ -153,8 +155,8 @@ async def process_delete_callback(callback: CallbackQuery):
   payload = {
     "user_id": user_id,
     "local_id": local_id,
-    "text": "deleted via bot", # Заглушка
-    "time": "2025-01-01T00:00:00", # Заглушка
+    "task_text": "deleted via bot", # Заглушка
+    "task_time": "2025-01-01T00:00:00", # Заглушка
   }
 
 
@@ -163,7 +165,11 @@ async def process_delete_callback(callback: CallbackQuery):
     async with session.request("DELETE", url_delete_task, json=payload) as response:
 
       if response.status == 200:
-        await callback.answer(f"Задача №{local_id} удалена ✅")
+          msg = await callback.message.answer(f"Задача №{local_id} удалена ✅")
+
+          await callback.answer()
+          await asyncio.sleep(3)
+          await msg.delete()
       else:
          print(f"Ошибка{response.status}")
 
@@ -579,8 +585,8 @@ async def YES(call:CallbackQuery, state: FSMContext):
   
   payload = {
         "user_id": target_chat_id,
-        "text": task,
-        "time": target_date.isoformat()
+        "task_time": target_date.isoformat(),
+        "task_text": task,
     }
 
   async with aiohttp.ClientSession() as session:
